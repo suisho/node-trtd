@@ -13,8 +13,22 @@ module.exports = function(ymlString, opt){
   // to table
   var head = yaml.head
   var body = yaml.body
-
+  
   var $ = cheerio.load("<div><table>")
+  
+  forgeTable($, head, body)
+  
+  var tableHtml = $("div").html()
+  if(options.pretty){
+    tableHtml = html.prettyPrint(tableHtml, {
+      indent_size: options.indent_size
+    })
+  }
+  return tableHtml
+
+}
+
+var forgeTable = function($, head, body){
   
   // head
   var $head = $("<tr>")
@@ -27,7 +41,7 @@ module.exports = function(ymlString, opt){
   if(util.isArray(body)){
     bodyItems = body
   }else{
-    var keyParam = yaml.key ? yaml.key : headKeys[0]
+    var keyParam = headKeys[0]
     bodyItems = []
     Object.keys(body).forEach(function(bodyKey){
       var item = body[bodyKey]
@@ -40,14 +54,7 @@ module.exports = function(ymlString, opt){
     $("table").append(forgeRow($, "td", item, headKeys))
   })
 
-  
-  var tableHtml = $("div").html()
-  if(options.pretty){
-    tableHtml = html.prettyPrint(tableHtml, {
-      indent_size: options.indent_size
-    })
-  }
-  return tableHtml
+  return $
 }
 
 var forgeRow = function($, tag, obj, order){
