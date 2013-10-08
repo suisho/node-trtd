@@ -1,0 +1,11 @@
+head:
+  param: parameter
+  desc: description
+body:
+  -
+    param: foo
+    desc: hogehoge
+  -
+    param: baz
+    desc: fugafuga
+
