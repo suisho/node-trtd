@@ -1,47 +1,50 @@
-var jsYAML = require('js-yaml')
 var cheerio = require("cheerio")
 var extend = require("extend")
 var html = require("html")
 var util = require("util")
 
-module.exports = function(ymlString, opt){
-  var options = extend({
-    pretty : true,
-    indent_size : 2
-  }, opt)
-  var yaml = jsYAML.safeLoad(ymlString)
-  // to table
-  var head = yaml.head
-  var body = yaml.body
-  
-  var $ = cheerio.load("<div><table>")
-  
-  forgeTable($, head, body)
-  
-  var tableHtml = $("div").html()
+var defaultOption = {
+  pretty : true,
+  indent_size : 2
+}
+
+// trtd
+//  head , [body , [opt] ]
+module.exports = function(head, body, opt){
+  if(typeof opt !== "undefined"){
+    opt = body
+  }
+  var options   = extend(defaultOption, opt)
+  var tableHtml = table(head, body)
+
   if(options.pretty){
     tableHtml = html.prettyPrint(tableHtml, {
       indent_size: options.indent_size
     })
   }
   return tableHtml
-
 }
 
-var forgeTable = function($, head, body){
-  
-  // head
-  var $head = $("<tr>")
-  var headKeys = Object.keys(head)
-  $("table").append(forgeRow($, "th", head))
 
-  // body
-  var $body = $("<tr>")
+var table = function(head, body){
+  if(util.isArray(head)){
+    var headObj = {}
+    head.forEach(function(h){
+      headObj[h] = h
+    })
+    head = headObj
+  }
+
+  var $ = cheerio.load("<div><table>")
+
+  var order = Object.keys(head)
+  $("table").append(row($, "th", head, order))
+
   var bodyItems = undefined
   if(util.isArray(body)){
     bodyItems = body
   }else{
-    var keyParam = headKeys[0]
+    var keyParam = order[0]
     bodyItems = []
     Object.keys(body).forEach(function(bodyKey){
       var item = body[bodyKey]
@@ -51,19 +54,26 @@ var forgeTable = function($, head, body){
   }
 
   bodyItems.forEach(function(item){
-    $("table").append(forgeRow($, "td", item, headKeys))
+    $("table").append(row($, "td", item, order))
   })
 
-  return $
+  return $("div").html()
 }
 
-var forgeRow = function($, tag, obj, order){
+var row = function($, tag, obj, order){
   var $row = $("<tr>")
   if(order == undefined){
     order = Object.keys(obj)
   }
   order.forEach(function(key){
-    $row.append( $("<" + tag + ">").text( obj[key] ) )
+
+    var str = obj[key]
+    if(typeof str === "undefined"){
+      str = ""
+    }
+    console.log(key, obj[key], str)
+
+    $row.append( $("<" + tag + ">").text( str ) )
   })
   return $row
 }
