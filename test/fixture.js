@@ -6,7 +6,7 @@ var assertFixture = function(fixtureFile, resultHtml){
   assert.equal( fs.readFileSync("./fixture/" + fixtureFile + ".html", 'utf-8'), resultHtml )
 }
 describe("trtd", function(){
-  it("head = object, body = object", function(){
+  it("head = object, body = object, basic", function(){
     var head = {
       param: 'parameter',
       desc: 'description'
@@ -72,6 +72,19 @@ describe("trtd", function(){
       }
     ]
     assertFixture("lack", trtd(head, body))
+  })
+  it("head = null, body = array", function(){
+    var body =[
+      {
+        parameter:    'foo',
+        description:  'hogehoge'
+      },
+      {
+        description:  'fugafuga',
+        parameter:    'baz'
+      }
+    ]
+    assertFixture("head_undefined", trtd(null, body))
   })
   
 })

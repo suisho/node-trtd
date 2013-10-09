@@ -27,24 +27,23 @@ module.exports = function(head, body, opt){
 
 
 var table = function(head, body){
+  var headObj = {}
   if(util.isArray(head)){
-    var headObj = {}
     head.forEach(function(h){
       headObj[h] = h
     })
-    head = headObj
+  }else{
+     headObj = head
   }
 
-  var $ = cheerio.load("<div><table>")
-
-  var order = Object.keys(head)
-  $("table").append(row($, "th", head, order))
-
-  var bodyItems = undefined
+  var bodyItems = []
   if(util.isArray(body)){
     bodyItems = body
   }else{
-    var keyParam = order[0]
+    var keyParam = "key"
+    if(headObj){
+      keyParam = Object.keys(headObj)[0]
+    }
     bodyItems = []
     Object.keys(body).forEach(function(bodyKey){
       var item = body[bodyKey]
@@ -53,6 +52,19 @@ var table = function(head, body){
     })
   }
 
+  var order = []
+  try{
+    order = Object.keys(headObj)
+  }catch(e){
+    order = Object.keys(bodyItems[0])
+  }
+
+  var $ = cheerio.load("<div><table>")
+  
+  if(headObj){
+    $("table").append(row($, "th", headObj, order))
+  }
+  
   bodyItems.forEach(function(item){
     $("table").append(row($, "td", item, order))
   })
@@ -71,8 +83,6 @@ var row = function($, tag, obj, order){
     if(typeof str === "undefined"){
       str = ""
     }
-    console.log(key, obj[key], str)
-
     $row.append( $("<" + tag + ">").text( str ) )
   })
   return $row
