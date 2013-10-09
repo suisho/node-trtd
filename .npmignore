@@ -1,2 +1,3 @@
 test/*
-fixutre/*
+fixture/*
+.npmignore
