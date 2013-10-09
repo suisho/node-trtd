@@ -1,5 +1,5 @@
 {
-  "name": "yaml-table",
+  "name": "trtd",
   "version": "0.0.0",
   "description": "",
   "main": "index.js",
@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "suisho",
-  "license": "BSD-2-Clause",
+  "license": "MIT",
   "dependencies": {
     "cheerio": "~0.12.3",
     "extend": "~1.2.1",
