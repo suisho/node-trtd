@@ -12,7 +12,7 @@ var defaultOption = {
 //  head , [body , [opt] ]
 module.exports = function(head, body, opt){
   if(typeof opt !== "undefined"){
-    opt = body
+    opt = {}
   }
   var options   = extend(defaultOption, opt)
   var tableHtml = table(head, body)
