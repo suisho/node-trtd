@@ -1,5 +1,5 @@
 # trtd
-Html table rendere that from js object
+Render Html table from object
 
 
 # install
